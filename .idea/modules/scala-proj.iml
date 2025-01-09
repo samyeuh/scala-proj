@@ -7,11 +7,13 @@
     <content url="file://$MODULE_DIR$/../..">
       <sourceFolder url="file://$MODULE_DIR$/../../src/main/scala" isTestSource="false" packagePrefix="fr.efrei.fp.project" />
       <sourceFolder url="file://$MODULE_DIR$/../../src/test/scala" isTestSource="true" packagePrefix="fr.efrei.fp.project" />
+      <sourceFolder url="file://$MODULE_DIR$/../../src/main/resources" type="java-resource" />
       <excludeFolder url="file://$MODULE_DIR$/../../target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="sbt: scala-sdk-3.3.4" level="project" />
+    <orderEntry type="library" name="sbt: com.github.tototoshi:scala-csv_3:1.3.10:jar" level="project" />
     <orderEntry type="library" scope="TEST" name="sbt: org.scala-lang.modules:scala-xml_3:2.1.0:jar" level="project" />
     <orderEntry type="library" name="sbt: org.scala-lang:scala-library:2.13.14:jar" level="project" />
     <orderEntry type="library" name="sbt: org.scala-lang:scala3-library_3:3.3.4:jar" level="project" />

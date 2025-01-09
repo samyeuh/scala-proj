@@ -11,6 +11,7 @@ lazy val root = (project in file("."))
     idePackagePrefix := Some("fr.efrei.fp.project"),
     libraryDependencies ++= Seq(
         "org.scalatest" %% "scalatest" % scalaTestVersion % Test,
-        "org.scalatest" %% "scalatest-flatspec" % scalaTestVersion % Test
+        "org.scalatest" %% "scalatest-flatspec" % scalaTestVersion % Test,
+        "com.github.tototoshi" %% "scala-csv" % "1.3.10" // Librairie pour lire et écrire des fichiers CSV
     )
   )
