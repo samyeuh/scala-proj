@@ -2,23 +2,45 @@ package fr.efrei.fp.project
 
 import csv.Row
 
-class Table(name: String, rows: Seq[Row]) {
+case class Table(name: String, rows: Seq[Row] = Seq.empty, columns: Seq[String] = Seq.empty) {
 
   def select(columns: String*): Table = {
     val newRows = rows.map(row => {
       Row(row.data.filter { case (key, _) => columns.contains(key) })
     })
-    Table(name, newRows)
+    Table(name, newRows, columns)
   }
 
-  def print(): Unit = {
-    println(s"Table $name")
-    if (rows.isEmpty) {
-      println("Table vide")
-      return
+  def insert(data: Map[String, String]): Table = {
+    if (!data.keys.forall(columns.contains)) {
+      throw new IllegalArgumentException("Inserted data contains unknown columns")
     }
+    val newRow = Row(data)
+    Table(name, rows :+ newRow, columns)
+  }
 
-    val columns = rows.head.data.keys.toSeq
+  def filter(condition: Row => Boolean): Table = {
+    val filteredRows = rows.filter(condition)
+    Table(name, filteredRows, columns)
+  }
+
+  def addColumn(columnName: String, transform: Row => String): Table = {
+    if (columns.contains(columnName)) {
+      throw new IllegalArgumentException(s"Column '$columnName' already exists")
+    }
+    val updatedRows = rows.map(row => {
+      Row(row.data + (columnName -> transform(row)))
+    })
+    Table(name, updatedRows, columns :+ columnName)
+  }
+
+  def printTable(): String = {
+    val builder = new StringBuilder
+    builder.append(s"Table: $name\n")
+    if (rows.isEmpty) {
+      builder.append("Table vide\n")
+      return builder.toString()
+    }
 
     val columnsWidths = columns.map { col =>
       math.max(col.length, rows.map(_.data.getOrElse(col, "").length).max)
@@ -30,19 +52,31 @@ class Table(name: String, rows: Seq[Row]) {
       }.mkString("| ", " | ", " |")
     }
 
-    // En-tête
+    // Header
     val header = formatRows(columns)
     val separator = columnsWidths.map("-" * _).mkString("+-", "-+-", "-+")
-    println(separator)
-    println(header)
-    println(separator)
+    builder.append(separator).append("\n")
+    builder.append(header).append("\n")
+    builder.append(separator).append("\n")
 
-    // Données
+    // Data rows
     rows.foreach { row =>
       val values = columns.map(col => row.data.getOrElse(col, ""))
-      println(formatRows(values))
+      builder.append(formatRows(values)).append("\n")
+      builder.append(separator).append("\n") // Separation between rows
     }
-    println(separator)
+
+    builder.toString()
   }
 
+  override def toString: String = printTable()
+}
+
+object Table {
+  def create(name: String, columns: Seq[String]): Table = {
+    if (columns.isEmpty) {
+      throw new IllegalArgumentException("Cannot create a table with no columns")
+    }
+    Table(name, Seq.empty, columns)
+  }
 }

@@ -1,12 +1,13 @@
 package fr.efrei.fp.project
-import csv.Reader
+
+import SQLContext._
 
 object Main extends App {
-  val rows = Reader().readCSV("src/main/resources/users.csv")
-  val table = Table("users", rows)
-
-  val result = table
-    .select("id", "name", "age")
-
-  result.print()
+  execute {
+    "create table Students (Name, Age, Grade)".exec()
+    "Students add (Alice, 22, A)".exec()
+    "Students add (Bob, 18, B)".exec()
+    "Students select (Name, Grade)".exec()
+    "Students filter Age > 20".exec()
+  }
 }
