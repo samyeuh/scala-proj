@@ -11,7 +11,7 @@ case class Table(name: String, rows: Seq[Row] = Seq.empty, columns: Seq[String] 
     val newRows = rows.map(row => {
       Row(row.data.filter { case (key, _) => columns.contains(key) })
     })
-    Table(name, newRows, this.columns)
+    Table(name, newRows, columns)
   }
 
   def insert(data: Map[String, String]): Table = {
