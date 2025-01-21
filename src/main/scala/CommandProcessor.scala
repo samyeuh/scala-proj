@@ -42,8 +42,9 @@ object CommandProcessor {
           case None => s"La table '$tableName' n'existe pas et n'a pas pu être chargée"
         }
 
-      case Array(tableName, "filter", condition) =>
+      case Array(tableName, "filter", conditionAvecParanthese) =>
         val table = getOrLoadTable(tableName)
+        val condition = conditionAvecParanthese.replaceAll("\\(", "").replaceAll("\\)", "")
         table match {
           case Some(existingTable) =>
             val filteredTable = existingTable.filter(row => evaluateCondition(row, condition))
@@ -81,6 +82,8 @@ object CommandProcessor {
           case "=" => cellValue == value
           case ">" => cellValue.toDoubleOption.exists(_ > value.toDouble)
           case "<" => cellValue.toDoubleOption.exists(_ < value.toDouble)
+          case ">=" => cellValue.toDoubleOption.exists(_ >= value.toDouble)
+          case "<=" => cellValue.toDoubleOption.exists(_ <= value.toDouble)
           case _ => false
         }
       case None => false
