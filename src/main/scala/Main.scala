@@ -8,6 +8,5 @@ object Main extends App {
     "Students add (Alice, 22, A)".exec()
     "Students add (Bob, 18, B)".exec()
     "Students select (Name, Grade)".exec()
-    "Students filter Age > 20".exec()
   }
 }

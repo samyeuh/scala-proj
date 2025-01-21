@@ -1,6 +1,9 @@
 package fr.efrei.fp.project
 
+import com.github.tototoshi.csv.*
 import csv.Row
+
+import java.io.File
 
 case class Table(name: String, rows: Seq[Row] = Seq.empty, columns: Seq[String] = Seq.empty) {
 
@@ -8,7 +11,7 @@ case class Table(name: String, rows: Seq[Row] = Seq.empty, columns: Seq[String] 
     val newRows = rows.map(row => {
       Row(row.data.filter { case (key, _) => columns.contains(key) })
     })
-    Table(name, newRows, columns)
+    Table(name, newRows, this.columns)
   }
 
   def insert(data: Map[String, String]): Table = {
@@ -16,7 +19,9 @@ case class Table(name: String, rows: Seq[Row] = Seq.empty, columns: Seq[String] 
       throw new IllegalArgumentException("Les données insérées contiennent des colonnes inconnues")
     }
     val newRow = Row(data)
-    Table(name, rows :+ newRow, columns)
+    val updatedTable = Table(name, rows :+ newRow, columns)
+    updatedTable.saveToCSV()
+    updatedTable
   }
 
   def filter(condition: Row => Boolean): Table = {
@@ -24,14 +29,25 @@ case class Table(name: String, rows: Seq[Row] = Seq.empty, columns: Seq[String] 
     Table(name, filteredRows, columns)
   }
 
-  def addColumn(columnName: String, transform: Row => String): Table = {
-    if (columns.contains(columnName)) {
-      throw new IllegalArgumentException(s"La colonne '$columnName' existe déjà")
+  def saveToCSV(): Unit = {
+    val file = new File(s"src/main/resources/$name.csv")
+    val writer = CSVWriter.open(file)
+    writer.writeRow(columns)
+    rows.foreach { row =>
+      writer.writeRow(columns.map(col => row.data.getOrElse(col, "")))
     }
-    val updatedRows = rows.map(row => {
-      Row(row.data + (columnName -> transform(row)))
-    })
-    Table(name, updatedRows, columns :+ columnName)
+    writer.close()
+  }
+
+  def loadFromCSV(): Table = {
+    val file = new File(s"src/main/resources/$name.csv")
+    if (!file.exists()) {
+      throw new IllegalArgumentException(s"Le fichier $name.csv n'existe pas.")
+    }
+    val reader = CSVReader.open(file)
+    val data = reader.allWithHeaders()
+    reader.close()
+    Table(name, data.map(Row), columns)
   }
 
   def printTable(): String = {
@@ -77,6 +93,8 @@ object Table {
     if (columns.isEmpty) {
       throw new IllegalArgumentException("Impossible de créer une table sans colonnes")
     }
-    Table(name, Seq.empty, columns)
+    val table = Table(name, Seq.empty, columns)
+    table.saveToCSV()
+    table
   }
 }
