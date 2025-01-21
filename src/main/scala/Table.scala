@@ -13,7 +13,7 @@ case class Table(name: String, rows: Seq[Row] = Seq.empty, columns: Seq[String] 
 
   def insert(data: Map[String, String]): Table = {
     if (!data.keys.forall(columns.contains)) {
-      throw new IllegalArgumentException("Inserted data contains unknown columns")
+      throw new IllegalArgumentException("Les données insérées contiennent des colonnes inconnues")
     }
     val newRow = Row(data)
     Table(name, rows :+ newRow, columns)
@@ -26,7 +26,7 @@ case class Table(name: String, rows: Seq[Row] = Seq.empty, columns: Seq[String] 
 
   def addColumn(columnName: String, transform: Row => String): Table = {
     if (columns.contains(columnName)) {
-      throw new IllegalArgumentException(s"Column '$columnName' already exists")
+      throw new IllegalArgumentException(s"La colonne '$columnName' existe déjà")
     }
     val updatedRows = rows.map(row => {
       Row(row.data + (columnName -> transform(row)))
@@ -63,7 +63,7 @@ case class Table(name: String, rows: Seq[Row] = Seq.empty, columns: Seq[String] 
     rows.foreach { row =>
       val values = columns.map(col => row.data.getOrElse(col, ""))
       builder.append(formatRows(values)).append("\n")
-      builder.append(separator).append("\n") // Separation between rows
+      builder.append(separator).append("\n")
     }
 
     builder.toString()
@@ -75,7 +75,7 @@ case class Table(name: String, rows: Seq[Row] = Seq.empty, columns: Seq[String] 
 object Table {
   def create(name: String, columns: Seq[String]): Table = {
     if (columns.isEmpty) {
-      throw new IllegalArgumentException("Cannot create a table with no columns")
+      throw new IllegalArgumentException("Impossible de créer une table sans colonnes")
     }
     Table(name, Seq.empty, columns)
   }

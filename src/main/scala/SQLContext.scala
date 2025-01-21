@@ -9,6 +9,6 @@ object SQLContext {
   }
 
   def execute(block: => Unit): Unit = {
-    block // Évalue le bloc avec les commandes enrichies
+    block
   }
 }

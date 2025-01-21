@@ -10,24 +10,24 @@ object CommandProcessor {
     parts match {
       case Array("create", "table", rest) =>
         val tableNameAndColumns = rest.split("\\(", 2)
-        if (tableNameAndColumns.length != 2) return "Invalid syntax for create table"
+        if (tableNameAndColumns.length != 2) return "Erreur de syntax lors de la création de table"
 
         val tableName = tableNameAndColumns(0).trim
         val columns = tableNameAndColumns(1).stripSuffix(")").split(",").map(_.trim).toSeq
         tables += (tableName -> Table.create(tableName, columns))
-        s"Table '$tableName' created with columns: ${columns.mkString(", ")}"
+        s"Table '$tableName' crée avec les colonnes: ${columns.mkString(", ")}"
 
       case Array(tableName, "add", rest) =>
         val values = rest.stripPrefix("(").stripSuffix(")").split(",").map(_.trim).toSeq
         tables.get(tableName) match {
           case Some(table) =>
             val columns = table.columns
-            if (columns.length != values.length) return s"Invalid number of values. Expected: ${columns.length}, Got: ${values.length}"
+            if (columns.length != values.length) return s"Erreur de nombre de valeurs. Attendu: ${columns.length}, Reçu: ${values.length}"
 
             val newRow = columns.zip(values).toMap
             tables += (tableName -> table.insert(newRow))
-            s"Row added to table '$tableName'"
-          case None => s"Table '$tableName' does not exist"
+            s"Ligne ajouté à la table '$tableName'"
+          case None => s"La table '$tableName' n'existe pas"
         }
 
       case Array(tableName, "select", rest) =>
@@ -36,7 +36,7 @@ object CommandProcessor {
           case Some(table) =>
             val selectedTable = table.select(columns: _*)
             selectedTable.toString
-          case None => s"Table '$tableName' does not exist"
+          case None => s"La table '$tableName' n'existe pas"
         }
 
       case Array(tableName, "filter", condition) =>
@@ -45,10 +45,10 @@ object CommandProcessor {
             val filteredTable = table.filter(row => evaluateCondition(row, condition))
             tables += (tableName -> filteredTable)
             filteredTable.toString
-          case None => s"Table '$tableName' does not exist"
+          case None => s"La table '$tableName' n'existe pas"
         }
 
-      case _ => "Unknown command"
+      case _ => "Commande inconnue"
     }
   }
 
