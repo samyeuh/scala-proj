@@ -1,7 +1,6 @@
 package fr.efrei.fp.project
 
 import scala.io.StdIn.readLine
-import SQLContext._
 
 object Main extends App {
   println("Bienvenue dans le terminal interactif SQL-like !")
