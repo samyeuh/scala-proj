@@ -4,7 +4,7 @@
 
 Ce projet consiste à développer un **DSL interne en Scala 3**, inspiré de SQL, qui simplifie l’interrogation et la manipulation de bases de données. Il s'adresse à des utilisateurs souhaitant exécuter des requêtes sans la complexité habituelle du langage SQL complet.  Ce DSL sera apprécié des novices comme des plus expérimentés pour sa simplicité d'exécution.
 
-###🤔 Pourquoi ce domaine est intéressant ?
+### 🤔 Pourquoi ce domaine est intéressant ?
 
 Le traitement et l’interrogation des bases de données sont au cœur de nombreuses applications modernes. Le langage SQL est une référence incontournable, mais il présente des limitations qui rendent sa manipulation écrasante pour des utilisateurs moins techniques ou qui travaillent dans des cas d'utilisation particuliers (visualisation ou traitement customisé des résultats par exemple).
 
