@@ -75,48 +75,6 @@ Le DSL ciblé résout principalement les problèmes suivants :
 
 ---
 
-## ⚙️ Exemples d'utilisation
-
-Voici quelques exemples pratiques montrant la puissance et la simplicité du DSL :  
-
-### Exemple 1 : Sélection et affichage des colonnes
-```scala
-val result = database
-  .select("name", "email")
-  .from("users")
-  .execute()
-```
-
-### Exemple 2 : Filtrage des utilisateurs par condition
-```scala
-val result = database
-  .select("name", "age")
-  .from("users")
-  .where("age > 30")
-  .execute()
-```
-
-### Exemple 3 : Export des résultats en JSON
-```scala
-database
-  .select("id", "name")
-  .from("users")
-  .where("name IS NOT NULL")
-  .execute()
-  .toJSON("output/users.json")
-```
-
-### Exemple 4 : Regroupement et agrégation des données
-```scala
-val result = database
-  .select("region", "COUNT(*)")
-  .from("users")
-  .groupBy("region")
-  .execute()
-```
-
----
-
 ## 🛠️ Instructions d’installation et d’exécution
 
 ### Pré-requis
@@ -129,7 +87,7 @@ val result = database
    git clone <lien-du-repo>
    cd <nom-du-repo>
    ```
-
+### Pour apprendre à utiliser des démonstrations de commande, sont disponibles via  la commande help
 ---
 
 ## ✅ Tests
@@ -138,14 +96,11 @@ Les tests couvrent :
 - Les cas courants, comme les sélections, filtres, et tri.  
 - Les cas limites, comme des colonnes ou conditions inexistantes.  
 
-Les tests sont écrits avec **ScalaTest** pour garantir :  
+Les tests sont écrits avec pour garantir :  
 1. La validité des fonctionnalités principales.  
 2. La robustesse de la syntaxe.
 
-Exécutez les tests avec :
-```bash
-sbt test
-```
+
 
 ---
 
