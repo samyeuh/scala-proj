@@ -1,22 +1,35 @@
 package fr.efrei.fp.project
 
-import com.github.tototoshi.csv.*
+import com.github.tototoshi.csv.
+import java.io.File
+import scala.util.{Using, Try, Success, Failure}
+import java.util.logging.{Logger, Level}
 
 import java.io.File
 
+/**
+ * Row represents a single record in a table.
+ */
 case class Row(data: Map[String, String]) {
   def get(column: String): Option[String] = data.get(column)
 }
 
+/**
+ * Table represents a database-like table with rows and columns.
+ */
 case class Table(name: String, rows: Seq[Row] = Seq.empty, columns: Seq[String] = Seq.empty) {
 
+  /**
+   * Select specific columns to create a new table.
+   */
   def select(columns: String*): Table = {
-    val newRows = rows.map(row => {
-      Row(row.data.filter { case (key, _) => columns.contains(key) })
-    })
+    val newRows = rows.map(row => Row(row.data.filter { case (key, _) => columns.contains(key) }))
     Table(name, newRows, columns)
   }
 
+  /**
+   * Insert a new row into the table.
+   */
   def insert(data: Map[String, String]): Table = {
     if (!data.keys.forall(columns.contains)) {
       throw new IllegalArgumentException("Les données insérées contiennent des colonnes inconnues")
@@ -27,19 +40,25 @@ case class Table(name: String, rows: Seq[Row] = Seq.empty, columns: Seq[String] 
     updatedTable
   }
 
+  /**
+   * Filter rows based on a condition.
+   */
   def filter(condition: Row => Boolean): Table = {
     val filteredRows = rows.filter(condition)
     Table(name, filteredRows, columns)
   }
 
+  /**
+   * Save the table to a CSV file.
+   */
   def saveToCSV(): Unit = {
     val file = new File(s"src/main/resources/$name.csv")
-    val writer = CSVWriter.open(file)
-    writer.writeRow(columns)
-    rows.foreach { row =>
-      writer.writeRow(columns.map(col => row.data.getOrElse(col, "")))
+    Using(CSVWriter.open(file)) { writer =>
+      writer.writeRow(columns)
+      rows.foreach(row => writer.writeRow(columns.map(col => row.data.getOrElse(col, ""))))
+    }.recover {
+      case e: Exception => throw new RuntimeException(s"Erreur lors de l'écriture du fichier CSV pour $name", e)
     }
-    writer.close()
   }
 
   def loadFromCSV(): Table = {
@@ -53,12 +72,20 @@ case class Table(name: String, rows: Seq[Row] = Seq.empty, columns: Seq[String] 
     Table(name, data.map(Row), columns)
   }
 
+  /**
+   * Print the table in a user-friendly format.
+   */
   def printTable(): String = {
-    val builder = new StringBuilder
-    builder.append(s"Table: $name\n")
-    if (rows.isEmpty) {
-      builder.append("Table vide\n")
-      return builder.toString()
+    if (rows.isEmpty) return s"Table: $name\nTable vide\n"
+
+    val columnWidths = columns.map(col => math.max(col.length, rows.map(_.data.getOrElse(col, "").length).max))
+    val formatRow = (values: Seq[String]) => values.zip(columnWidths).map { case (value, width) => value.padTo(width, ' ') }.mkString("| ", " | ", " |")
+
+    val header = formatRow(columns)
+    val separator = columnWidths.map("-" * _).mkString("+-", "-+-", "-+")
+    val rowsData = rows.map(row => formatRow(columns.map(col => row.data.getOrElse(col, "")))).mkString("\n")
+
+    s"Table: $name\n$separator\n$header\n$separator\n$rowsData\n$separator\n"
     }
 
     val columnsWidths = columns.map { col =>
