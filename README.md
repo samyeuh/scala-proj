@@ -46,11 +46,9 @@ Le DSL ciblé résout principalement les problèmes suivants :
 ### 🚀 Fonctionnalités principales
 
 - Créer une table (`create`)  
-- Insérer des données (`insert`)  
+- Insérer des données (`add`)  
 - Sélectionner des colonnes (`select`)  
-- Appliquer des filtres (`where`)
-- Joindre des tables (`join`)
-- Regrouper les données (`groupBy`)
+- Appliquer des filtres (`filter`)
 - Trier les résultats (`orderBy`)
 - Limiter le nombre de résultats (`limit`) 
 
@@ -86,6 +84,14 @@ Le DSL ciblé résout principalement les problèmes suivants :
    ```bash
    git clone <lien-du-repo>
    cd <nom-du-repo>
+   ```
+2. **Compiler le projet: **
+   ```bash
+     sbt compile
+   ```
+3. **Lancer le projet: **
+   ```bash
+    sbt run
    ```
 ### Pour apprendre à utiliser des démonstrations de commande, sont disponibles via  la commande help
 ---
