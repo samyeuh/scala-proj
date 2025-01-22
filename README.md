@@ -45,11 +45,14 @@ Le DSL ciblé résout principalement les problèmes suivants :
 
 ### 🚀 Fonctionnalités principales
 
+- Créer une table (`create`)  
+- Insérer des données (`insert`)  
 - Sélectionner des colonnes (`select`)  
-- Appliquer des filtres (`where`)  
-- Trier des résultats (`orderBy`)  
-- Grouper les données (`groupBy`)  
-- Exporter les résultats (`toJSON` ou `toCSV`)
+- Appliquer des filtres (`where`)
+- Joindre des tables (`join`)
+- Regrouper les données (`groupBy`)
+- Trier les résultats (`orderBy`)
+- Limiter le nombre de résultats (`limit`) 
 
 ---
 
