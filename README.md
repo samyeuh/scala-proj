@@ -93,8 +93,8 @@ Le DSL ciblé résout principalement les problèmes suivants :
 ## ✅ Tests
 
 Les tests couvrent :  
-- Les cas courants, comme les sélections, filtres, et tri.  
-- Les cas limites, comme des colonnes ou conditions inexistantes.  
+- Les cas courants, comme les sélections, filtres, et tri puis biensur la création, l'insertion.  
+- Les cas limites, comme des colonnes ou conditions inexistantes, l'existance des tables et attribut avant d'agir.  
 
 Les tests sont écrits avec pour garantir :  
 1. La validité des fonctionnalités principales.  
