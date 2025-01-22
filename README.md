@@ -112,5 +112,7 @@ Les tests sont écrits avec pour garantir :
 
 ## ✍️ Auteurs
 
-- **Cyril TAKAM, Samy BOUHAMIDI, Dgili, Enzo SISINNI**   
-- [Lien vers le projet]  
+- [Samy BOUHAMIDI](https://www.linkedin.com/in/samy-bhmd/)
+- [Cyril TAKAM](https://www.linkedin.com/in/cyril-takam-7852b919b/)
+- [Enzo SISINNI](https://www.linkedin.com/in/enzo-sisinni-29107620a/)
+- [Abdou Khadre DIOP](https://www.linkedin.com/in/abdou-khadre-diop-6b97441bb/) 
