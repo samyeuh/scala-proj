@@ -15,6 +15,9 @@ case class Row(data: Map[Column, String]) {
 case class Table(name: String, rows: Seq[Row] = Seq.empty, columns: Seq[Column] = Seq.empty) {
 
     def select(columnNames: String*): TablePrint = {
+      if (columnNames == Seq("*")) {
+        return TablePrint(name, rows, columns)
+      }
       val selectedColumns = columns.filter(col => columnNames.contains(col.name))
       val newRows = rows.map(row => Row(row.data.filter { case (key, _) => selectedColumns.contains(key) }))
       TablePrint(name, newRows, selectedColumns)

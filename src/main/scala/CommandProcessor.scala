@@ -39,11 +39,36 @@ object CommandProcessor {
 
       case Array(tableName, "select", rest) =>
         val table = getOrLoadTable(tableName)
-        val columns = rest.stripPrefix("(").stripSuffix(")").split(",").map(_.trim).toSeq
+        val values = rest.stripPrefix("(").stripSuffix(")").split(",").map(_.trim).toSeq
+        val selectParts = rest.split(" order by | limit ", 3)
+        val columnsPart = selectParts(0).stripPrefix("(").stripSuffix(")").split(",").map(_.trim).toSeq
+
+        val orderBy = if (rest.contains("order by")) {
+          val orderPart = rest.split("order by")(1).split("limit")(0).trim
+          val Array(column, direction) = orderPart.split(" ", 2) match {
+            case Array(col) => Array(col, "ASC")
+            case Array(col, dir) => Array(col, dir)
+            case _ => return "Erreur de syntaxe dans la clause 'order by'"
+          }
+          Some((column.trim, direction.trim.toUpperCase))
+        } else None
+
+        val limit = if (rest.contains("limit")) {
+          rest.split("limit")(1).trim.toIntOption
+        } else None
+
         table match {
-          case Some(existingTable) =>
-            val selectedTable = existingTable.select(columns: _*)
-            selectedTable.toString
+          case Some(table) =>
+            val selectedTable = table.select(columnsPart: _*)
+            val orderedTable = orderBy match {
+              case Some((col, dir)) => selectedTable.orderBy(col, dir)
+              case None => selectedTable
+            }
+            val limitedTable = limit match {
+              case Some(n) => orderedTable.limit(n)
+              case None => orderedTable
+            }
+            limitedTable.toString
           case None => s"La table '$tableName' n'existe pas et n'a pas pu être chargée"
         }
 
