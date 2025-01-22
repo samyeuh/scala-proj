@@ -1,9 +1,12 @@
 package fr.efrei.fp.project
 
 import com.github.tototoshi.csv.*
-import csv.Row
 
 import java.io.File
+
+case class Row(data: Map[String, String]) {
+  def get(column: String): Option[String] = data.get(column)
+}
 
 case class Table(name: String, rows: Seq[Row] = Seq.empty, columns: Seq[String] = Seq.empty) {
 

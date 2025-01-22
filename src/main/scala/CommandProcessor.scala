@@ -1,7 +1,7 @@
 package fr.efrei.fp.project
 
 import com.github.tototoshi.csv.defaultCSVFormat
-import csv.Row
+
 
 object CommandProcessor {
   private var tables: Map[String, Table] = Map()
