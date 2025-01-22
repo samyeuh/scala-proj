@@ -3,7 +3,7 @@ package fr.efrei.fp.project
 import scala.io.StdIn.readLine
 
 object Main extends App {
-  println("Bienvenue dans le terminal interactif SQL-like !")
+  println("Bienvenue dans le terminal interactif !")
   println("Tapez une commande ou 'exit' pour quitter.\n")
 
   var continue = true
