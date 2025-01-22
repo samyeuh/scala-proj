@@ -14,9 +14,14 @@ object CommandProcessor {
         if (tableNameAndColumns.length != 2) return "Erreur de syntaxe lors de la création de table"
 
         val tableName = tableNameAndColumns(0).trim
-        val columns = tableNameAndColumns(1).stripSuffix(")").split(",").map(_.trim).toSeq
+        val columnsDefinition = tableNameAndColumns(1).stripSuffix(")").split(",").map(_.trim)
+        val columns = columnsDefinition.map { colDef =>
+          val parts = colDef.split(" ")
+          if (parts.length != 2) return s"Erreur de syntaxe dans la définition de colonne : '$colDef'"
+          Column(parts(0).trim, ColumnType.fromString(parts(1).trim))
+        }
         tables += (tableName -> Table.create(tableName, columns))
-        s"Table '$tableName' créée avec les colonnes: ${columns.mkString(", ")}"
+        s"Table '$tableName' créée avec les colonnes: ${columns.map(c => s"${c.name} ${c.dataType}").mkString(", ")}"
 
       case Array(tableName, "add", rest) =>
         val table = getOrLoadTable(tableName)
@@ -47,8 +52,7 @@ object CommandProcessor {
         val condition = conditionAvecParanthese.replaceAll("\\(", "").replaceAll("\\)", "")
         table match {
           case Some(existingTable) =>
-            val filteredTable = existingTable.filter(row => evaluateCondition(row, condition))
-            tables += (tableName -> filteredTable)
+            val filteredTable = existingTable.filter(row => evaluateCondition(existingTable, row, condition))
             filteredTable.toString
           case None => s"La table '$tableName' n'existe pas et n'a pas pu être chargée"
         }
@@ -64,8 +68,8 @@ object CommandProcessor {
         val reader = com.github.tototoshi.csv.CSVReader.open(file)
         val data = reader.allWithHeaders()
         reader.close()
-        val columns = if (data.nonEmpty) data.head.keys.toSeq else Seq.empty
-        val loadedTable = Table(tableName, data.map(Row), columns)
+        val columns = if (data.nonEmpty) data.head.keys.map(key => Column(key.split(":")(0), ColumnType.fromString(key.split(":")(1)))).toSeq else Seq.empty
+        val loadedTable = Table(tableName, data.map(row => Row(columns.zip(row.values).toMap)), columns)
         tables += (tableName -> loadedTable)
         Some(loadedTable)
       } else {
@@ -74,7 +78,17 @@ object CommandProcessor {
     }
   }
 
-  private def evaluateCondition(row: Row, condition: String): Boolean = {
+  private def evaluateCondition(table: Table, row: Row, condition: String): Boolean = {
+    val Array(column, operator, value) = condition.split(" ", 3)
+    val col = table.columns.find(_.name == column).getOrElse(throw IllegalArgumentException(s"La colonne '$column' n'existe pas"))
+    col.dataType match {
+      case ColumnType.StringType => evaluateString(row, condition)
+      case ColumnType.IntType => evaluateInt(row, condition)
+      case _ => false
+    }
+  }
+
+  private def evaluateInt(row: Row, condition: String): Boolean = {
     val Array(column, operator, value) = condition.split(" ", 3)
     row.get(column) match {
       case Some(cellValue) =>
@@ -84,6 +98,22 @@ object CommandProcessor {
           case "<" => cellValue.toDoubleOption.exists(_ < value.toDouble)
           case ">=" => cellValue.toDoubleOption.exists(_ >= value.toDouble)
           case "<=" => cellValue.toDoubleOption.exists(_ <= value.toDouble)
+          case _ => false
+        }
+      case None => false
+    }
+  }
+
+  private def evaluateString(row: Row, str: String): Boolean = {
+    val Array(column, operator, value) = str.split(" ", 3)
+    row.get(column) match {
+      case Some(cellValue) =>
+        operator match {
+          case "=" => cellValue == value
+          case "!=" => cellValue != value
+          case "[" => cellValue.startsWith(value)
+          case "]" => cellValue.endsWith(value)
+          case "%" => cellValue.contains(value)
           case _ => false
         }
       case None => false
