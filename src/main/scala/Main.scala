@@ -4,7 +4,7 @@ import scala.io.StdIn.readLine
 
 object Main extends App {
   println("Bienvenue dans le terminal interactif !")
-  println("Tapez une commande ou 'exit' pour quitter.\n")
+  println("Tapez une commande ! Faites 'exit' pour quitter et 'help' pour connaitre les commandes disponibles.\n")
 
   var continue = true
 
